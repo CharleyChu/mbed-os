@@ -23,12 +23,58 @@
 extern "C" {
 #endif
 
+#ifdef TARGET_CYTFM_064B0S2_4343W
+#include "region_defs.h"
+
+/* Flash layout for App on TARGET_CYTFM_064B0S2_4343W
+ *   +--------------------------+
+ *   |                          |
+ *   |         KVSTORE          |  }+ MBED_CONF_STORAGE_TDB_INTERNAL_INTERNAL_SIZE
+ *   |                          |
+ *   +--------------------------+
+ *   |                          |
+ *   |                          |
+ *   |  NS partition for App    |  }+ NS_PARTITION_SIZE
+ *   |                          |
+ *   |                          |
+ *   +--------------------------+ <-+ NS_PARTITION_START
+ */
+
+static const cyhal_flash_block_info_t CYTFM_FLASH_BLOCKS[2] =
+{
+    // Main Flash
+    {
+        .start_address = NS_PARTITION_START,
+        .size = NS_PARTITION_SIZE + MBED_CONF_STORAGE_TDB_INTERNAL_INTERNAL_SIZE,
+        .sector_size = CY_FLASH_SIZEOF_ROW,
+        .page_size = CY_FLASH_SIZEOF_ROW,
+        .erase_value = 0x00U,
+    },
+    // Working Flash
+    {
+        .start_address = CY_EM_EEPROM_BASE,
+        .size = CY_EM_EEPROM_SIZE,
+        .sector_size = CY_FLASH_SIZEOF_ROW,
+        .page_size = CY_FLASH_SIZEOF_ROW,
+        .erase_value = 0x00U,
+    },
+};
+
+#endif /* TARGET_CYTFM_064B0S2_4343W */
+
 int32_t flash_init(flash_t *obj)
 {
     if (CY_RSLT_SUCCESS != cyhal_flash_init(&(obj->flash))) {
         return -1;
     }
+#ifdef TARGET_CYTFM_064B0S2_4343W
+    obj->info.block_count =
+         sizeof(CYTFM_FLASH_BLOCKS) / sizeof(cyhal_flash_block_info_t);
+    obj->info.blocks = CYTFM_FLASH_BLOCKS;
+#else /* TARGET_CYTFM_064B0S2_4343W */
     cyhal_flash_get_info(&(obj->flash), &(obj->info));
+#endif /* TARGET_CYTFM_064B0S2_4343W */
+
     return 0;
 }
 
