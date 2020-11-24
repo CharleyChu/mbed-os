@@ -163,7 +163,7 @@ static inline int mbedtls_psa_get_ecc_oid_from_id(
     psa_ecc_curve_t curve, size_t bits,
     char const **oid, size_t *oid_len )
 {
-#if TARGET_TFM
+#if (TARGET_TFM && !TARGET_TFM_V1_2)
     /* Use older Crypto API, at least until TF-M updates its crypto
      * implementation to Mbed TLS 2.22.0. See
      * https://github.com/ARMmbed/mbed-os/issues/13025 for details. */
@@ -331,7 +331,7 @@ static inline int mbedtls_psa_get_ecc_oid_from_id(
     (void) oid;
     (void) oid_len;
     return( -1 );
-#endif /* TARGET_TFM */
+#endif /* TARGET_TFM && !TARGET_TFM_V1_2 */
 }
 
 #define MBEDTLS_PSA_MAX_EC_PUBKEY_LENGTH 1
@@ -451,7 +451,7 @@ static inline int mbedtls_psa_err_translate_pk( psa_status_t status )
 static inline psa_key_type_t mbedtls_psa_parse_tls_ecc_group(
     uint16_t tls_ecc_grp_reg_id, size_t *bits )
 {
-#if TARGET_TFM
+#if (TARGET_TFM && !TARGET_TFM_V1_2)
     *bits = PSA_ECC_CURVE_BITS( tls_ecc_grp_reg_id );
     return( PSA_KEY_TYPE_ECC_KEY_PAIR( tls_ecc_grp_reg_id ));
 #else
