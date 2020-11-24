@@ -1,4 +1,8 @@
 {
+    "policy": {
+        "platform": "psoc64",
+        "version": 1.0
+    },
     "debug" :
     {
         "m0p" : {
@@ -60,11 +64,14 @@
                 "id": 0,
                 "launch": 1,
                 "acq_win": 100,
+                "wdt_timeout": 4000,
+                "wdt_enable": true,
                 "monotonic": 0,
                 "smif_id": 0,
                 "clock_flags": 578,
                 "protect_flags": 1,
                 "upgrade": false,
+                "upgrade_mode": "swap",
                 "resources": [
                     {
                         "type": "FLASH_PC1_SPM",
@@ -80,6 +87,11 @@
                         "type": "SRAM_DAP",
                         "address": 135184384,
                         "size": 16384
+                    },
+                    {
+                        "type": "STATUS_PARTITION",
+                        "address": 270303232,
+                        "size": 32768
                     }
                 ]
             },
@@ -94,7 +106,10 @@
                 "monotonic": 0,
                 "smif_id": 0,
                 "acq_win": 100,
-                "multi_image" : 1,
+                "wdt_timeout": 4000,
+                "wdt_enable": true,
+                "set_img_ok": false,
+                "multi_image": 1,
                 "upgrade": true,
                 "version": "0.1",
                 "rollback_counter": 0,
@@ -131,7 +146,7 @@
                 "id": 16,
                 "monotonic": 8,
                 "smif_id": 1,
-                "multi_image" : 2,
+                "multi_image": 2,
                 "upgrade": true,
                 "version": "0.1",
                 "rollback_counter": 0,
@@ -203,17 +218,27 @@
         },
         "its":
         {
-            "offset": 1835008,
-            "size": 4096,
+            "offset": 1818624,
+            "size": 8192,
             "num_assets": 8,
             "max_asset_size": 512
         },
-        "sst":
+        "ps":
         {
-            "offset": 1839104,
+            "offset": 1826816,
             "size": 32768,
             "num_assets": 35,
             "max_asset_size": 2008
+        },
+        "nv_counters":
+        {
+            "offset": 1866752,
+            "size": 1024
+        },
+        "debug_port":
+        {
+            "uart_base" : 1080360960,
+            "enabled" : true
         }
     }
 }
