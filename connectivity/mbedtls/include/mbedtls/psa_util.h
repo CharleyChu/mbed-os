@@ -451,7 +451,7 @@ static inline int mbedtls_psa_err_translate_pk( psa_status_t status )
 static inline psa_key_type_t mbedtls_psa_parse_tls_ecc_group(
     uint16_t tls_ecc_grp_reg_id, size_t *bits )
 {
-#if TARGET_TFM
+#if TARGET_TFM_V1_0
     *bits = PSA_ECC_CURVE_BITS( tls_ecc_grp_reg_id );
     return( PSA_KEY_TYPE_ECC_KEY_PAIR( tls_ecc_grp_reg_id ));
 #else
