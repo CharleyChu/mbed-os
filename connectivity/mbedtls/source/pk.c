@@ -618,7 +618,7 @@ int mbedtls_pk_wrap_as_opaque( mbedtls_pk_context *pk,
         return( ret );
 
     /* prepare the key attributes */
-#if TARGET_TFM
+#if (TARGET_TFM && !TARGET_TFM_V1_2)
     curve_id = mbedtls_ecp_curve_info_from_grp_id( ec->grp.id )->tls_id;
     key_type = mbedtls_psa_parse_tls_ecc_group ( curve_id, &bits );
 #else
