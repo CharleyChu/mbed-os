@@ -15,9 +15,9 @@
 #include "cy_sysint.h"
 
 #include "ns_ipc_config.h"
-#include "os_wrapper/thread.h"
 #include "tfm_ns_mailbox.h"
 #include "platform_multicore.h"
+#include "cmsis_os2.h"
 
 static uint8_t saved_irq_state = 1;
 
@@ -100,12 +100,12 @@ int32_t tfm_ns_mailbox_hal_init(struct ns_mailbox_queue_t *queue)
 
 const void *tfm_ns_mailbox_get_task_handle(void)
 {
-    return os_wrapper_thread_get_handle();
+    return osThreadGetId();
 }
 
 void tfm_ns_mailbox_hal_wait_reply(mailbox_msg_handle_t handle)
 {
-    os_wrapper_thread_wait_flag((uint32_t)handle, OS_WRAPPER_WAIT_FOREVER);
+    osThreadFlagsWait(handle, osFlagsWaitAll, osWaitForever);
 }
 
 void tfm_ns_mailbox_hal_enter_critical(void)
@@ -163,7 +163,7 @@ void cpuss_interrupts_ipc_8_IRQHandler(void)
 {
     uint32_t magic;
     mailbox_msg_handle_t handle;
-    void *task_handle;
+    osThreadId_t task_handle;
 
     if (!mailbox_clear_intr())
         return;
@@ -177,9 +177,9 @@ void cpuss_interrupts_ipc_8_IRQHandler(void)
                 break;
             }
 
-            task_handle = (void *)tfm_ns_mailbox_get_msg_owner(handle);
+            task_handle = (osThreadId_t)tfm_ns_mailbox_get_msg_owner(handle);
             if (task_handle) {
-                os_wrapper_thread_set_flag_isr(task_handle, (uint32_t)handle);
+                osThreadFlagsSet(task_handle, handle);
             }
         }
     }
